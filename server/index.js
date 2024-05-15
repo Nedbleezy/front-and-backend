@@ -1,12 +1,11 @@
-import bodyParser from 'body-parser'
-import express, { Router } from 'express'
-import cors from 'cors'
-import multer from 'multer'
+import bodyParser from 'body-parser';
+import express from 'express';
+import cors from 'cors';
+import multer from 'multer';
 
-const upload = multer({ dest: 'uploads/' })
-const app = express()
+const upload = multer({ dest: 'uploads/' });
 
-const port = 3001
+const port = 3001;
 let posts = [
   {
     id: 1,
@@ -32,31 +31,35 @@ let posts = [
     author: 'Samuel Green',
     date: '2023-08-10T09:15:00Z',
   },
-]
-let lastId = 3
+];
+let lastId = 3;
 
-app.use(cors())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
-app.use(express.static('public'))
-app.use(express.static('src'))
+const app = express();
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
+
+// get all posts
 app.get('/api', (req, res) => {
-  res.json(posts)
-})
-app.get('/api/:id', (req, res) => {
-  const id = parseInt(req.params.id)
-  const post = posts.find((p) => p.id === id)
-  res.json(post)
-})
-app.post('/api/post', (req, res) => {
-  const { title, content, author } = req.body
+  res.json(posts);
+});
 
-  posts.push(req.body)
-  console.log(posts)
-  res.json(posts)
-})
+//get a post by id
+app.get('/api/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const post = posts.find((p) => p.id === id);
+  res.json(post);
+});
+
+// make a blog post
+
+let date = new Date();
+app.post('/api/post', (req, res) => {
+  posts.push({ ...req.body, date });
+  res.json(posts);
+});
 
 app.listen(port, () => {
-  console.log(`server is runing on ${port}`)
-})
+  console.log(`server is runing on ${port}`);
+});
